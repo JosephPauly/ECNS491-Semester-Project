@@ -1,0 +1,172 @@
+---
+title: "ECNS 491 Project Draft 2"
+author: "Braden Molvig and Joseph Pauly"
+date: "11/10/2022"
+output: word_document
+---
+              Cryptocurrency and Stock Market Relationship
+  We want to try to find a relationship between the stock market sectors and the top cryptocurrency to find money making opportunities.
+This project is aimed at answering the question: Are trends in the crypto market influenced by trends in different sectors of the stock market?
+The stock closing price data are from Yahoo finance. Bitcoin price data is from Nasdaq. All stock datasets contain daily prices such as open, close, high, low, and adjusted close. Cryptocurrency dataset include daily prices, open, high, and close. All four datasets span over the past three years. We will be analyzing different stocks as indicators for different sectors of the market. Apple will be used for technology, Johnson and Johnson will be used as a healthcare indicator, Visa for the financial sector, Exxon-Mobil for the energy sector, and finally Walmart for consumer discretion rate.
+	The stock data was gathered from yahoo finance for each stock and merged into a dataset using the date variable. Because all these data observations were from the same website, we did not need to do much cleaning. Each dataset was downloaded using the QuantMod package in R. The Bitcoin data was found using a CSV file found from NASDAQ. We chose to do the past three years because we thought that would be enough data to realize a trend, but recent enough data to help it still be applicable to the present. The reason why we chose each stock is we looked at the most valuable stock for some of the biggest market sectors. We chose to use Bitcoin as our preferred cryptocurrency because it is the most recognizable and was the greatest market share of all the cryptocurrencies. An issue we ran into was that the Bitcoin data was every day while the stock data was only on the weekdays. This was dealt with by merging the data on the date so it threw out the Bitcoin weekend prices. To do this, we needed to change our date into Julian days so it was easier to merge into one dataframe. Once all the data was merged into a dataset, we tried to figure out the best way to compare the trends between each stock to the trends seen in the Bitcoin market.
+	The best way we figured was to look at the percent change in closing price from day to day for each stock and Bitcoin. This helped take out the problem we had of looking at how trends in the market dominated every sector and they all moved together. The percentage helped us look at how each changed specifically. We used closing price as our variable of interest because it was the easiest to understand and use as each dataset had it. After the percentages were found, we began our analysis.
+	Our data had to be transformed in order to find the day to day change. This was done by adding a first difference column for each stock and Bitcoin closing price. We then first differenced the data to get it stationary and to help look at the trends from one day to the next. This was done using a simple function in R. This was done for each stock and Bitcoin and the results were stored in a new column of the data frame. There were no missing data points in the data sets we gathered as they were from an official source. We also scaled down the Bitcoin price to make it easier to compare the price of Bitcoin to the price of each stock.
+```{r, echo = FALSE, message = FALSE, results = 'hide'}
+#apple aapl
+#visa v
+#walmart wmt
+#exxon mobil xom
+#johnson & johnson jnj
+
+library(quantmod)
+#Stock data from Yahoo Finance
+getSymbols("AAPL",src="yahoo",from="2019-01-01")
+getSymbols("V",src="yahoo",from="2019-01-01")
+getSymbols("WMT",src="yahoo",from="2019-01-01")
+getSymbols("XOM",src="yahoo",from="2019-01-01")
+getSymbols("JNJ",src="yahoo",from="2019-01-01")
+
+AAPL=as.data.frame(AAPL)
+V=as.data.frame(V)
+WMT=as.data.frame(WMT)
+XOM=as.data.frame(XOM)
+JNJ=as.data.frame(JNJ)
+
+head(AAPL,2);tail(AAPL,2)
+head(V,2);tail(V,2)
+head(WMT,2);tail(WMT,2)
+head(XOM,2);tail(XOM,2)
+head(JNJ,2);tail(JNJ,2)
+
+dim(AAPL);dim(V);dim(WMT);dim(XOM);dim(JNJ)
+
+#Bitcoin data from Nasdaq
+BTC_data = read.csv("C:/Users/brado/OneDrive/Desktop/2022 Fall/ECNS 491/Project/HistoricalData_1668019166502.csv")
+head(BTC_data,2);tail(BTC_data,2)
+dim(BTC_data)
+
+add.julian=function(df0){
+  df0$Date=row.names(df0)
+  df0$jday=as.numeric(julian(as.Date(df0$Date,"%Y-%m-%d")))
+  df0
+}
+#Create new DF of only closing price and date for Apple
+tmp=as.data.frame(AAPL); tail(tmp)
+tmp$Date=row.names(tmp); tmp=add.julian(tmp); tmp$Apple=tmp$AAPL.Close 
+row.names(tmp)=NULL; APPLE=tmp[,c('jday','Apple')]
+head(APPLE,3); tail(APPLE,3)
+
+#Create new DF of only closing price and date for Visa
+tmp=as.data.frame(V); tail(tmp)
+tmp$Date=row.names(tmp); tmp=add.julian(tmp); tmp$Visa=tmp$V.Close 
+row.names(tmp)=NULL; Visa=tmp[,c('jday','Visa')]
+head(Visa,3); tail(Visa,3)
+
+#Create new DF of only closing price and date for Walmart
+tmp=as.data.frame(WMT); tail(tmp)
+tmp$Date=row.names(tmp); tmp=add.julian(tmp); tmp$Walmart=tmp$WMT.Close 
+row.names(tmp)=NULL; Walmart=tmp[,c('jday','Walmart')]
+head(Walmart,3); tail(Walmart,3)
+
+#Create new DF of only closing price and date for Exxon Mobil
+tmp=as.data.frame(XOM); tail(tmp)
+tmp$Date=row.names(tmp); tmp=add.julian(tmp); tmp$Exxon=tmp$XOM.Close 
+row.names(tmp)=NULL; Exxon=tmp[,c('jday','Exxon')]
+head(Exxon,3); tail(Exxon,3)
+
+#Create new DF of only closing price and date for Johnson & Johnson
+tmp=as.data.frame(JNJ); tail(tmp)
+tmp$Date=row.names(tmp); tmp=add.julian(tmp); tmp$Johnson=tmp$JNJ.Close 
+row.names(tmp)=NULL; Johnson=tmp[,c('jday','Johnson')]
+head(Johnson,3); tail(Johnson,3)
+
+
+library(lubridate)
+#Create new DF of only closing price and for Bitcoin
+#convert date column to type date and then change date format to y-m-d
+BTC_data$newdate = strptime(as.character.Date(BTC_data$Date), "%m/%d/%Y")
+head(BTC_data,3)
+BTC_data$newdate = as.Date.character(BTC_data$newdate)
+
+#Create new DF of only closing price and for Bitcoin
+tmp=as.data.frame(BTC_data); tail(tmp)
+tmp$Date=BTC_data$newdate; row.names(tmp) = BTC_data$newdate; tmp=add.julian(tmp); tmp$Bitcoin=tmp$Bitcoin.Close.Last 
+row.names(tmp)=NULL; Bitcoin=tmp[,c('jday','Close.Last')]
+Bitcoin$Bitcoin = Bitcoin$Close.Last
+Bitcoin = Bitcoin[,c('jday','Bitcoin')]
+head(Bitcoin,3); tail(Bitcoin,3)
+
+#merge all data frames by julian day
+
+dfA = merge(Walmart, Bitcoin)
+dfB = merge(dfA, Exxon)
+dfC = merge(dfB, Johnson)
+dfD = merge(dfC, APPLE)
+df1 = merge(dfD, Visa)
+summary(df1)
+
+#first difference data to find difference in daily closing prices
+apple_fd = diff(df1$Apple)
+jnj_fd = diff(df1$Johnson)
+visa_fd = diff(df1$Visa)
+walmart_fd = diff(df1$Walmart)
+exxon_fd = diff(df1$Exxon)
+bitcoin_fd = diff(df1$Bitcoin)
+
+julian_day = df1$jday[2:879]
+df2 = as.data.frame(cbind(julian_day, apple_fd, jnj_fd, visa_fd, walmart_fd, exxon_fd, bitcoin_fd))
+summary(df2)
+
+df2 = subset(df2, julian_day>18050)
+
+df2$bitcoin_fd_scaled = (df2$bitcoin_fd)/750 #scale down bitcoin price changes to fit same scale as stocks
+
+plot(df2$julian_day ,df2$bitcoin_fd_scaled,type = 'l',col=1,main = 'Daily Price Changes',xlab = 'julian days',ylab = 'price in $USD')
+lines(df2$julian_day ,df2$apple_fd,type='l',col=2)
+lines(df2$julian_day ,df2$bitcoin_fd_scaled)
+legend('topleft',legend=c('Bitcoin','Apple'),fill=c(1,2))
+
+plot(df2$julian_day ,df2$bitcoin_fd_scaled,type = 'l',col=1,main = 'Daily Price Changes',xlab = 'julian days',ylab = 'price in $USD')
+lines(df2$julian_day ,df2$jnj_fd,type='l',col=2)
+lines(df2$julian_day ,df2$bitcoin_fd_scaled)
+legend('topleft',legend=c('Bitcoin','Johnson & Johnson'),fill=c(1,2))
+
+plot(df2$julian_day ,df2$bitcoin_fd_scaled,type = 'l',col=1,main = 'Daily Price Changes',xlab = 'julian days',ylab = 'price in $USD')
+lines(df2$julian_day ,df2$visa_fd,type='l',col=2)
+lines(df2$julian_day ,df2$bitcoin_fd_scaled)
+legend('topleft',legend=c('Bitcoin','Visa'),fill=c(1,2))
+
+plot(df2$julian_day ,df2$bitcoin_fd_scaled,type = 'l',col=1,main = 'Daily Price Changes',xlab = 'julian days',ylab = 'price in $USD')
+lines(df2$julian_day ,df2$walmart_fd,type='l',col=2)
+lines(df2$julian_day ,df2$bitcoin_fd_scaled)
+legend('topleft',legend=c('Bitcoin','Walmart'),fill=c(1,2))
+
+plot(df2$julian_day ,df2$bitcoin_fd_scaled,type = 'l',col=1,main = 'Daily Price Changes',xlab = 'julian days',ylab = 'price in $USD')
+lines(df2$julian_day ,df2$exxon_fd,type='l',col=2)
+lines(df2$julian_day ,df2$bitcoin_fd_scaled)
+legend('topleft',legend=c('Bitcoin','Exxon Mobil'),fill=c(1,2))
+
+plot(df1$jday, df1$Apple, type='l',col=1,main='Stock Prices', xlab ='Julian Days', ylab='price in  in $USD',asp=2)
+lines(df1$jday,df1$Walmart,type='l', col=2)
+lines(df1$jday, df1$Exxon,type='l',col=3)
+lines(df1$jday, df1$Visa,type='l',col=4)
+lines(df1$jday, df1$Johnson,type='l', col=5)
+legend('topleft',legend=c('Apple','Walmart','Exxon','Visa', 'Johnson & Johnson'),fil=c(1,2,3,4,5))
+
+#test correlations between individual stocks and Bitcoin
+cor(df2$bitcoin_fd,df2$apple_fd)
+cor(df2$bitcoin_fd,df2$jnj_fd)
+cor(df2$bitcoin_fd,df2$visa_fd)
+cor(df2$bitcoin_fd,df2$walmart_fd)
+cor(df2$bitcoin_fd,df2$exxon_fd)
+
+#highest correlation between Bitcoin and Walmart, lowest between Bitcoin and Johnson & Johnson
+#The formatting of the markdown is still a work in progress so the word document was submitted as well
+```
+The first graph that was created was the graph of the daily price changes of Bitcoin vs. Apple stock. From the graph you can tell that there is some correlation between Covid when everything was very volatile, but before Covid, the Apple stock was way more volatile. Bitcoin seemed to relatively stay the same with little fluctuation while Apple was all over the place plunging in both directions. In more recent times, it seems like the trends from before Covid have reappeared and Apple is fluctuating greatly again while the change in Bitcoin seems to be much less.
+The next graph created was the change per day of Johnson and Johnson stock which symbolizes healthcare vs. the change per day of Bitcoin. These trends do not seem to fit at all as when Johnson and Johnson are fluctuating, Bitcoin stayed relatively the same, but when Bitcoin is fluctuating heavily, Johnson and Johnson stayed relatively the same. This makes sense as during Covid, cryptocurrency changed majorly day to day while Johnson and Johnson stayed relatively the same as healthcare was used frequently and they developed a vaccine for Covid. This graph seems to lend itself to the fact that there is relatively no correlation between cryptocurrency and healthcare. 
+The third graph that we interpretted was the daily change of Visa stock vs. the daily change of Bitcoin. The biggest thing that sticks out about this graph is how much the price of Visa changes daily. There is so much variability day to day in Visa stock price. There doesn’t seem to be much correlation between the two because of how much change there is in Visa. If all financial sector stocks fluctuate this much, it would be hard to correlate them with any trend because it changes so much regardless of what is happening around it.
+The penultimate stock vs. Bitcoin graph was Walmart stock. Walmart stock seems to fit the Bitcoin data fairly well. There’s a little blip where Walmart changes a lot in a small span of time, but other than that, they seem to be pretty fairly similar. From 18,600 to 19,000 julian days the patterns closely resemble each other. Walmart stock is used as an indicator for consumer discretion rate so it would seem that consumers of Walmart may also be consumers of Bitcoin as they seem to be the most closely related. 
+The last stock graphed against Bitcoin was Exxon-Mobil. Exxon was used as a microcosm of the energy sector. At first glance, there does not seem to be much correlation between the two as Exxon doesn’t seem to ever fluctuate by that much and when it does it is at a different time from when Bitcoin does. Exxon seems to relatively keep the same price throughout, never making any big jumps positively or negatively. This shows that the energy sector is relatively stable and does not change majorly as all the other stocks did.
+This graphs shows the changes of all the stock prices over time
+Correlation coefficients for the stocks vs. Bitcoin in order of Apple, J&J, Visa, Walmart, and Exxon. Apple is the highest while J&J is the smallest.
