@@ -64,7 +64,7 @@ head(Stocks,3)
 dim(Stocks)
 
 # Load in Bitcoin Data from NASDAQ
-bitcoin = read.csv("C:/Users/Joseph/Desktop/ECNS 491/Final Project/HistoricalData_1668019166502.csv")
+bitcoin = read.csv("~/GitHub/ECNS491-Semester-Project/Data/HistoricalData_1668019166502.csv")
 
 # convert bitcoin date to y-m-d
 bitcoin$newdate = strptime(as.character.Date(bitcoin$Date), "%m/%d/%Y")
