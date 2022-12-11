@@ -2,7 +2,7 @@
 title: "Stock Market vs Bitcoin Price Comparison"
 author: "Joseph Pauly and Braden Molvig"
 date: "`r Sys.Date()`"
-output: html_document
+output: word_document
 ---
 
 ```{r setup, include=FALSE}
@@ -254,14 +254,24 @@ grid.arrange(histBitcoin,histXLB,histXLC,histXLE,histXLF,histXLI,histXLK,histXLP
 ```{r,echo=FALSE}
 grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,nrow=4,top="Time Series Plots of Each Sector ETF and Bitcoin")
 ```
-     The first graph we created was just graphing each ETF and Bitcoin as a time series to see if we could see a trend from just looking at the series. Our first takeaway was there was not much overlap between any of the ETFs and Bitcoin. It was also really easy to notice how much bigger the scale of Bitcoin was compared to the ETFs. Bitcoin has much more variation in movements than the ETFs do as well. Another thing we noticed was the dip in covid and how it impacted all ETFs, but Bitcoin didn't really have a dip. Each stock also seemed to have been increasing after the dip from covid while Bitcoin has beeen in free fall since before the start of 2022. We originally had graphed all the time series plots on one graph, but decided that graph was too hard to interpret. Another issue with that graph was the scale of Bitcoin as that made it impossible to see the trends of the other graphs because they just looked straight.
+|   The first graph we created was just graphing each ETF and Bitcoin as a time series to see if we could see a trend from just looking at the series. Our first takeaway was there was not much overlap between any of the ETFs and Bitcoin. It was also really easy to notice how much bigger the scale of Bitcoin was compared to the ETFs. Bitcoin has much more variation in movements than the ETFs do as well. Another thing we noticed was the dip in covid and how it impacted all ETFs, but Bitcoin didn't really have a dip. Each stock also seemed to have been increasing after the dip from covid while Bitcoin has beeen in free fall since before the start of 2022. We originally had graphed all the time series plots on one graph, but decided that graph was too hard to interpret. Another issue with that graph was the scale of Bitcoin as that made it impossible to see the trends of the other graphs because they just looked straight.
 ```{r,echo=FALSE}
 grid.arrange(BitcoinvsXLP,BitcoinvsXLB,BitcoinvsXLC,BitcoinvsXLE,BitcoinvsXLF,BitcoinvsXLI,BitcoinvsXLK,BitcoinvsXLRE,BitcoinvsXLU,BitcoinvsXLV,BitcoinvsXLY,nrow=4,top="Scatter Plots of Daily Price Changes")
 ```
-     Our next visualization that was used to analyze the relationship between the ETFs and Bitcoin was a scatter plot of daily price changes. These graphs show the daily changes of the ETFs on the y axis with the daily changes of Bitcoin on the x axis. As you can see most of the relationships are a very close slope to 0 showing that there is almost no positive trend with any of the ETFs.
+|   Our next visualization that was used to analyze the relationship between the ETFs and Bitcoin was a scatter plot of daily price changes. These graphs show the daily changes of the ETFs on the y axis with the daily changes of Bitcoin on the x axis. As you can see most of the relationships are a very close slope to 0 showing that there is almost no positive trend with any of the ETFs. The biggest slope came from the XLY ETF which is the consumer discretionary ETF. This makes sense becuase when people spend money, they also spend money on Bitcoin.
 ```{r,echo=FALSE}
 corrplot(cor(df2))
 ```
 ```{r,echo=FALSE}
+cor(df2)
+```
+
+|   Our third visualization shows a heat map of the correlations of daily price changes. From the heat map, you can see that the ETF's are fairly correlated with one another, but there is low correlation between the ETF's and Bitcoin. The consumer discretionary sector has the highest correlation to Bitcoin at 0.29. This is likely due to the assumption that the more money people have to spend on things, the more money the are willing to gamble with by buying Bitcoin as a speculative investment. 
+```{r,echo=FALSE}
 grid.arrange(histBitcoin,histXLB,histXLC,histXLE,histXLF,histXLI,histXLK,histXLP,histXLRE,histXLU,histXLV,histXLY,nrow=4,top="Density Plots of Daily Price Changes")
 ```
+|   The final graph shows the density of daily price changes. As expected, the ETF's follow a log-normal distribution centered around zero with the tails accounting for periods of high volatility in the market. The distribution of Bitcoin's daily price changes is also centered at zero, but has more activity in the tails. Bitcoin's price can rise and fall by more than $4,000 in a given day supporting the claim that cryptocurrency is a very volatile investment. 
+
+## Conclusion
+
+|   In conclusion, Bitcoin was mostly not correlated with any of the ETFs. The most correlated ETF to Bitcoin was the consumer discretion index and even that only had a correlation of about 0.30. Bitcoin has much more variance than any of the ETFs which is expected because the scale of Bitcoin is so much bigger than that of the ETFs. The final and biggest takeaway is Bitcoin is very volatile and a very risky investment that has giant price changes that are not indicated by anything in any market sector.
