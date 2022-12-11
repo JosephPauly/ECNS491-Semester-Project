@@ -258,6 +258,7 @@ grid.arrange(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,nrow=4,top="Time Series Plot
 ```{r,echo=FALSE}
 grid.arrange(BitcoinvsXLP,BitcoinvsXLB,BitcoinvsXLC,BitcoinvsXLE,BitcoinvsXLF,BitcoinvsXLI,BitcoinvsXLK,BitcoinvsXLRE,BitcoinvsXLU,BitcoinvsXLV,BitcoinvsXLY,nrow=4,top="Scatter Plots of Daily Price Changes")
 ```
+     Our next visualization that was used to analyze the relationship between the ETFs and Bitcoin was a scatter plot of daily price changes. These graphs show the daily changes of the ETFs on the y axis with the daily changes of Bitcoin on the x axis. As you can see most of the relationships are a very close slope to 0 showing that there is almost no positive trend with any of the ETFs.
 ```{r,echo=FALSE}
 corrplot(cor(df2))
 ```
